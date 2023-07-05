@@ -3,21 +3,19 @@ import dotenv from "dotenv"
 import "reflect-metadata";
 import cors from "cors"
 import { connectDb } from "./Infrastructrue/Ete.persistence/db/db"
-import { userRouter } from "./Api/routes/UserRoutes"
-import { UserManager } from "./Test/UserManager"
-import { container } from "./Test/inversify.config";
-import { INotificationService } from "./Test/Notificate";
+import { userRouter } from "./Api/routes/UserRoutes";
 
 const app:Express=express()
 dotenv.config()
 app.use(cors())
+app.use(express.json())
 
-app.get("/",(req,res)=>{
 
-        res.send("asdasd")
+app.use("/user",userRouter)
+
+app.get("/test",(req,res)=>{
+    res.send("merhabaalarrr")
 })
-
-
 
 
 app.listen(process.env.PORT || 8000 , () =>{

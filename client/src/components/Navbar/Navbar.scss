@@ -1,0 +1,59 @@
+
+$fontSize:16px;
+
+.navbarContainer {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    padding: 1rem 8rem;
+    align-items: center;
+    .logo{
+        font-size: calc(1.6*$fontSize);
+        font-weight: 700;
+        font-style: italic;
+        color: #068fff;
+        cursor: pointer;
+    }
+
+    .navbarLinkWrapper{
+        display: flex;
+
+        .navbarLink{
+            color: black;
+            text-decoration: none;
+          
+            margin-right: 1.4rem;
+            font-size: calc(1*$fontSize);
+            transition: .5s all;
+
+            &:hover{
+                color: #068fff;
+            }
+        }
+    }
+
+    .userLoginWrapper {
+        display: flex;
+
+        .loginLink {
+            background-color: #eee;
+            color: black;
+            border-radius: 20px;
+            padding: 5px 15px;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .registerLink{
+            background-color: #068fff;
+            border-radius: 20px;
+            padding: 5px 15px;
+            text-decoration: none;
+            color: white;
+        }
+    }
+
+}
