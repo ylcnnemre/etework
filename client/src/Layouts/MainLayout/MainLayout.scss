@@ -1,6 +1,25 @@
 .container{
-    background:linear-gradient(to right, #ffffff, #ebebeb);
+    background:linear-gradient(to right, #eee, #ebebeb);
     height: max-content;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     margin-top: 70px;
+
+
+    .newCompanyTab{
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+    }
+    
+    .saveButton {
+        background-color: rgba(40,167,69,1);
+        color: white;
+        margin-left: 1rem;
+        transition: .5s all;
+        
+        &:hover{
+            color: white !important;
+            opacity: .7 !important;
+        }
+    }
 }

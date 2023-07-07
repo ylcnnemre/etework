@@ -5,6 +5,7 @@ import Register from "./pages/Register/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { Provider } from "react-redux";
 import { store } from "./redux/Store";
+import CompanyPage from "./pages/Companies/CompanyPage";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route element={<ProtectedRoutes />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/companies"  element={<CompanyPage/>}  />
           </Route>
         </Routes>
       </BrowserRouter>
