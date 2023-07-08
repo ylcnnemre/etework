@@ -1,104 +1,30 @@
-import { Table, Button, Space, Input, TableColumnType, Modal } from "antd";
-import { SaveOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Button,
+  Space,
+  Input,
+  TableColumnType,
+  Modal,
+  InputNumber,
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import MainLayout from "../../Layouts/MainLayout/MainLayout";
 import "./CompanyPage.scss";
-import { useState, useMemo, useCallback } from "react";
-
-interface Company {
-  id: number;
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { httpClient } from "../../api/HttpClien";
+import { toast } from "react-toastify";
+export interface Company {
+  _id: number;
   companyName: string;
-  registrationNumber: string;
+  registrationNumber: number;
   country: string;
   website: string;
-  new: boolean;
+  newCompany: boolean;
 }
-
-const firstData = [
-  {
-    id: 1,
-    companyName: "ABC Company",
-    registrationNumber: "12345",
-    country: "USA",
-    website: "https://www.abc.com",
-    new: false,
-  },
-  {
-    id: 2,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 3,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 4,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 5,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 6,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 7,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 8,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 9,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-  {
-    id: 10,
-    companyName: "DEF Company",
-    registrationNumber: "67890",
-    country: "UK",
-    website: "https://www.def.com",
-    new: false,
-  },
-];
 
 const CompanyPage = () => {
   const [searchValue, setSearchValue] = useState<string | null>("");
-  const [tempData, setTempData] = useState<Company[]>(firstData);
+  const [tempData, setTempData] = useState<Company[]>([]);
   const [deleteModal, setDeleteModal] = useState<{
     control: boolean;
     id: number | null;
@@ -108,24 +34,38 @@ const CompanyPage = () => {
   });
   const [editingRow, setEditingRow] = useState<number | null>(null);
   const [editedData, setEditedData] = useState<Company>({
-    id: 0,
+    _id: 0,
     companyName: "",
-    registrationNumber: "",
+    registrationNumber: 0,
     country: "",
     website: "",
-    new: false,
+    newCompany: false,
   });
-  const [dataSource, setDataSource] = useState<Company[]>(firstData);
+  const [dataSource, setDataSource] = useState<Company[]>([]);
+
+  useEffect(() => {
+    httpClient.get("/company/getAll").then((val) => {
+      const response: Company[] = val.data.value.map((item) => {
+        return {
+          ...item,
+          newCompany: false,
+        };
+      });
+      setDataSource(response);
+      setTempData(response);
+    });
+  }, []);
 
   const columns: TableColumnType<Company>[] = [
     {
       title: "Company Name",
       dataIndex: "companyName",
       key: "companyName",
-      sorter: (a: Company, b: Company) => a.companyName.localeCompare(b.companyName),
+      sorter: (a: Company, b: Company) =>
+        a.companyName.localeCompare(b.companyName),
       width: "20%",
       render: (text: string, record: Company) =>
-        editingRow === record.id ? (
+        editingRow === record._id ? (
           <Input
             value={editedData.companyName}
             placeholder="Company Name"
@@ -141,16 +81,22 @@ const CompanyPage = () => {
       title: "Registration Number",
       dataIndex: "registrationNumber",
       key: "registrationNumber",
-      sorter: (a: Company, b: Company) =>   a.registrationNumber.localeCompare(b.registrationNumber),
+      sorter: (a: Company, b: Company) =>
+        a.registrationNumber - b.registrationNumber,
       width: "20%",
-      render: (text: string, record: Company) =>
-        editingRow === record.id ? (
+      render: (text: number, record: Company) =>
+        editingRow === record._id ? (
           <Input
             placeholder="Registration Number"
             value={editedData.registrationNumber}
-            onChange={(e) =>
-              handleEditInputChange(e.target.value, "registrationNumber")
-            }
+            onChange={(e) => {
+              if (/^\d*$/.test(e.target.value)) {
+                handleEditInputChange(
+                  Number(e.target.value),
+                  "registrationNumber"
+                );
+              }
+            }}
           />
         ) : (
           text
@@ -162,7 +108,7 @@ const CompanyPage = () => {
       key: "country",
       width: "20%",
       render: (text: string, record: Company) =>
-        editingRow === record.id ? (
+        editingRow === record._id ? (
           <Input
             placeholder="Country"
             value={editedData.country}
@@ -178,7 +124,7 @@ const CompanyPage = () => {
       key: "website",
       width: "20%",
       render: (text: string, record: Company) =>
-        editingRow === record.id ? (
+        editingRow === record._id ? (
           <Input
             placeholder="Web Site"
             value={editedData.website}
@@ -195,7 +141,7 @@ const CompanyPage = () => {
       key: "actions",
       width: "20%",
       render: (_: any, record: Company) => {
-        if (record.new) {
+        if (record.newCompany) {
           return (
             <Space>
               <Button
@@ -216,7 +162,7 @@ const CompanyPage = () => {
             </Space>
           );
         } else {
-          return editingRow === record.id ? (
+          return editingRow === record._id ? (
             <Space>
               <Button type="primary" onClick={() => handleSave(record)}>
                 Save
@@ -231,10 +177,10 @@ const CompanyPage = () => {
               <Button
                 type="primary"
                 danger
-                onClick={() => {
+                onClick={async () => {
                   setDeleteModal({
                     control: true,
-                    id: record.id,
+                    id: record._id,
                   });
                 }}
               >
@@ -247,62 +193,116 @@ const CompanyPage = () => {
     },
   ];
 
-  const handleEdit = (record: Company) => {
-    setEditingRow(record.id);
-    setEditedData(record);
+  const handleEdit = async (record: Company) => {
+    if (dataSource[0].newCompany) {
+      const result = dataSource.slice(1, dataSource.length);
+      setDataSource(result);
+      setEditingRow(record._id);
+      setEditedData(record);
+    } else {
+      setEditingRow(record._id);
+      setEditedData(record);
+    }
   };
 
-  const handleEditInputChange = (value: string, field: keyof Company) => {
+  const handleEditInputChange = (value: any, field: keyof Company) => {
     setEditedData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
   };
 
-  const handleSave = (record: Company) => {
-    if (searchValue == "") {
-      const result = dataSource.map((item) => {
-        if (item.id === editedData.id) {
-          return {
-            ...editedData,
-            new: false,
-          };
-        }
-        return item;
-      });
+  useEffect(() => {
+    console.log("editing ==>", editingRow);
+  }, [editingRow]);
 
-      setDataSource(result);
-      setTempData(result);
-      setEditingRow(null);
+  const handleSave = async (record: Company) => {
+    console.log("recordd ==>", record);
+    if (record.newCompany) {
+      const { _id, newCompany, ...rest } = editedData;
+
+      try {
+        const response = await httpClient.post("/company/save", {
+          ...rest,
+        });
+        console.log("response ==>", response);
+        if (response.data.success) {
+          toast.success("the addition process was successfull ", {
+            autoClose: 2000,
+            position: "top-right",
+          });
+
+          const result = dataSource.map((item) => {
+            if (item._id === editedData._id) {
+              return {
+                ...editedData,
+                newCompany: false,
+              };
+            }
+            return item;
+          });
+
+          setDataSource(result);
+          setTempData(result);
+          setEditingRow(null);
+        }
+      } catch (err) {
+        toast.error("form values are incorrect", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+      }
     } else {
-      const result = tempData.map((item) => {
-        if (item.id === editedData.id) {
-          return {
-            ...editedData,
-            new: false,
-          };
-        }
-        return item;
-      });
-      setDataSource(
-        dataSource.map((item) => {
-          if (item.id === editedData.id) {
-            return {
-              ...editedData,
-              new: false,
-            };
-          }
-          return item;
-        })
-      );
+      try {
+        const { newCompany, ...rest } = editedData;
+        const response = await httpClient.post("/company/update", {
+          ...rest,
+        });
+        if (response.data.success) {
+          toast.success("Successfull", {
+            position: "top-right",
+            autoClose: 2000,
+          });
 
-      setTempData(result);
-      setEditingRow(null);
+          const result = dataSource.map((item) => {
+            if (item._id === editedData._id) {
+              return {
+                ...editedData,
+                newCompany: false,
+              };
+            }
+            return item;
+          });
+
+          console.log("resultt123213 ==<", result);
+
+          setDataSource(result);
+
+          setTempData(
+            tempData.map((item) => {
+              const final = result.find((el) => el._id === item._id);
+              if (final) {
+                return {
+                  ...final,
+                };
+              }
+              return item;
+            })
+          );
+
+          setEditingRow(null);
+        }
+      } catch (err) {
+        toast.error("form values are incorrect", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+      }
     }
   };
 
   const handleCancel = (record: Company) => {
-    if (record.new) {
+    if (record.newCompany) {
       const result = dataSource.slice(1, dataSource.length);
       setDataSource(result);
     }
@@ -311,53 +311,77 @@ const CompanyPage = () => {
 
   const handleAddNewCompany = () => {
     const newCompany: Company = {
-      id: dataSource.length + 1,
+      _id: dataSource.length + 1,
       companyName: "",
-      registrationNumber: "",
+      registrationNumber: 0,
       country: "",
       website: "",
-      new: true,
+      newCompany: true,
     };
 
     setDataSource((prevDataSource) => [newCompany, ...prevDataSource]);
     setTempData((prevDataSource) => [newCompany, ...prevDataSource]);
-    setEditingRow(newCompany.id);
+    setEditingRow(newCompany._id);
     setEditedData(newCompany);
   };
 
-
-
   const addNewCompanyControl = useMemo(() => {
-    const firsData = dataSource.slice(0, 1);
+    return editingRow != null;
+  }, [editingRow]);
 
-    return firsData[0]?.new || searchValue != "";
-  }, [dataSource, searchValue]);
+  const searchCompany = useCallback(
+    (value: string) => {
+      setSearchValue(value);
+      const filterData = tempData.filter(
+        (item) =>
+          item.companyName.toLowerCase().search(value.toLowerCase()) != -1
+      );
 
-  const searchCompany = useCallback((value: string) => {
-    setSearchValue(value);
-    const filterData = tempData.filter(
-      (item) => item.companyName.toLowerCase().search(value.toLowerCase()) != -1
-    );
+      setDataSource(filterData);
+    },
+    [tempData]
+  );
 
-    setDataSource(filterData);
-  }, [tempData]);
+  const confirmDelete = async () => {
+    setDeleteModal({
+      control: false,
+      id: null,
+    });
+
+    const response = await httpClient.delete(`/company/${deleteModal.id}`);
+
+    if (response.data.success) {
+      const result = dataSource.filter((item) => item._id !== deleteModal.id);
+      setDataSource(result);
+      setTempData(result);
+
+      toast.success("Successfull", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    }
+  };
 
   return (
     <MainLayout>
       <div className="companyContainer">
         <div className="newCompanyTab">
-          <Input
-            placeholder="Search"
-            className="searchArea"
-            onChange={({ target: { value } }) => searchCompany(value)}
-          />
-          <Button
-            type="primary"
-            onClick={handleAddNewCompany}
-            disabled={addNewCompanyControl}
-          >
-            <PlusOutlined /> Add new company
-          </Button>
+          <h3>Companies</h3>
+          <div className="buttonWrapper">
+            <Input
+              placeholder="Search"
+              className="searchArea"
+              disabled={editingRow != null}
+              onChange={({ target: { value } }) => searchCompany(value)}
+            />
+            <Button
+              type="primary"
+              onClick={handleAddNewCompany}
+              disabled={addNewCompanyControl}
+            >
+              <PlusOutlined /> Add new company
+            </Button>
+          </div>
         </div>
         <Table
           dataSource={dataSource}
@@ -369,17 +393,7 @@ const CompanyPage = () => {
         <Modal
           title="Confirm"
           open={deleteModal.control}
-          onOk={() => {
-            setDeleteModal({
-              control: false,
-              id: null,
-            });
-            const result = dataSource.filter(
-              (item) => item.id !== deleteModal.id
-            );
-            setDataSource(result);
-            setTempData(result);
-          }}
+          onOk={confirmDelete}
           onCancel={() => {
             setDeleteModal({
               control: false,

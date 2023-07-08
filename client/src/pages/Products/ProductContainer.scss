@@ -1,0 +1,29 @@
+.productContainer{
+
+    padding: 2rem 8rem;
+
+    .newProductTab{
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .companyName{
+        display: inline-block;
+        text-transform: capitalize;
+        margin-right: 10px;
+    }
+   
+}
+
+.companyListItem{
+    cursor: pointer;
+    transition: .5s all;
+    &:hover{
+        opacity: .7;
+        color: blue !important;
+        font-size: 30px !important;
+    }
+}

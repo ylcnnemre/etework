@@ -1,7 +1,17 @@
 .companyContainer{
 
     padding: 2rem 8rem;
+
+
+    .newCompanyTab{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+    }
 }
+
+
 
 .searchArea {
      width: max-content;

@@ -1,16 +1,22 @@
+import { number } from "joi";
 import mongoose from "mongoose";
+
+export class companyClassModel {
+  companyName: string;
+  registrationNumber: number;
+  country: string;
+  website: string;
+}
 
 const companySchema = new mongoose.Schema(
   {
     companyName: {
       type: String,
       required: true,
-      unique : true
     },
     registrationNumber: {
-      type: String,
+      type: Number,
       required: true,
-      unique: true,
     },
     country: {
       type: String,
@@ -19,7 +25,6 @@ const companySchema = new mongoose.Schema(
     website: {
       type: String,
       required: true,
-      unique : true
     },
   },
   {
@@ -28,4 +33,4 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-export const companyModel=mongoose.model("company",companySchema)
+export const companyModel = mongoose.model("company", companySchema);

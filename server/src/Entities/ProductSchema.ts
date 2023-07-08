@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+export class ProductClassModel {
+  productName: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  company: any;
+}
+
 const productSchema = new mongoose.Schema({
   productName: {
     type: String,
@@ -19,10 +27,12 @@ const productSchema = new mongoose.Schema({
   },
   company: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Company",
+    ref: "company",
     required: true,
   },
+},{
+   timestamps : true,
+   versionKey : false
 });
 
-
-export const productModel = mongoose.model('Product', productSchema);
+export const productModel = mongoose.model("Product", productSchema);
