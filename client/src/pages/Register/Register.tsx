@@ -1,14 +1,30 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React ,{useEffect} from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Form, Input, Button, message } from "antd";
 import "./Register.scss";
 import MainLayout from "../../Layouts/MainLayout/MainLayout";
+import { httpClient } from "../../api/HttpClien";
+import { toast } from "react-toastify";
 
 const Register: React.FC = () => {
-  const onFinish = (values: any) => {
+  const navigate = useNavigate();
+  const onFinish = async (values: any) => {
     // Register logic here
-    console.log("Received values:", values);
+
+    const response = await httpClient.post("/user/save", {
+      ...values,
+    });
+
+    if (response.data.success) {
+      toast.success("Register process was successfull", {
+        position: "top-right",
+        autoClose: 1000,
+      });
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    }
   };
 
   const confirmPasswordValidator = ({ getFieldValue }: any) => ({
@@ -32,6 +48,14 @@ const Register: React.FC = () => {
       return Promise.resolve();
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, []);
 
   return (
     <MainLayout>

@@ -1,11 +1,16 @@
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { IDataTypes } from "../../redux/Store";
+import { Button } from "antd";
+import { logout } from "../../redux/reducers/AuthSlice";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const { auth } = useSelector((state: IDataTypes) => state);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
 
   return (
     <section className="navbarContainer">
@@ -14,13 +19,13 @@ const Navbar = () => {
       {auth ? (
         <div className="navbarLinkWrapper">
           <Link className="navbarLink" to={"/dashboard"}>
-            Anasayfa
+            HomePage
           </Link>
           <Link className="navbarLink" to={"/companies"}>
-            Şirketler
+            Companies
           </Link>
           <Link className="navbarLink" to={"/products"}>
-            Ürünler
+            Products
           </Link>
         </div>
       ) : null}
@@ -34,6 +39,19 @@ const Navbar = () => {
             Register
           </Link>
         </div>
+      ) : null}
+      {auth ? (
+        <Button
+          type="primary"
+          danger
+          onClick={() => {
+            localStorage.removeItem("token")
+            dispatch(logout());
+            navigate("/login")
+          }}
+        >
+          Logout
+        </Button>
       ) : null}
     </section>
   );

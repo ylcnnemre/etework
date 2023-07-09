@@ -44,7 +44,7 @@ const CompanyPage = () => {
   const [dataSource, setDataSource] = useState<Company[]>([]);
 
   useEffect(() => {
-    httpClient.get("/company/getAll").then((val) => {
+    httpClient.get("/company/getAll",{headers:{"Authorization":`bearer ${localStorage.getItem("token")}`}}).then((val) => {
       const response: Company[] = val.data.value.map((item) => {
         return {
           ...item,

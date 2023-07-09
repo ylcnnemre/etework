@@ -68,7 +68,7 @@ const ProductsPage = () => {
   };
 
   useEffect(() => {
-    httpClient.get("/product/getall").then((val) => {
+    httpClient.get("/product/getall",{headers:{"Authorization":`bearer ${localStorage.getItem("token")}`}}).then((val) => {
       const { success, value } = val.data;
       console.log("vall ==>", val);
       setDataSource(value);

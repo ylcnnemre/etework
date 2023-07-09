@@ -1,14 +1,41 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React,{useEffect} from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import "./Login.scss";
 import MainLayout from "../../Layouts/MainLayout/MainLayout";
+import { httpClient } from "../../api/HttpClien";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/reducers/AuthSlice";
 
 const Login = () => {
-  const onFinish = (values: any) => {
-    console.log("Received values:", values);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const onFinish = async (values: any) => {
+    try {
+      const response = await httpClient.post("/user/login", {
+        ...values,
+      });
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.log("err =>", err);
+    }
   };
+
+  useEffect(()=>{
+      const token = localStorage.getItem("token")
+
+      if(token)
+      {
+        navigate("/dashboard")
+      }
+
+  },[])
+
 
   return (
     <MainLayout>

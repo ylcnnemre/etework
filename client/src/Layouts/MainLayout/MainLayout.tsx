@@ -1,18 +1,28 @@
-import React,{FC,ReactNode} from 'react'
-import Navbar from '../../components/Navbar/Navbar'
-import "./MainLayout.scss"
+import React, { FC, ReactNode, useMemo } from "react";
+import Navbar from "../../components/Navbar/Navbar";
+import "./MainLayout.scss";
+import Footer from "../../components/Footer/Footer";
+import { useLocation } from "react-router-dom";
+const MainLayout: FC<{ children: ReactNode }> = ({ children }) => {
+  const location = useLocation();
 
-const MainLayout:FC<{children:ReactNode }> = ({children}) => {
+  const path = useMemo(() => {
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      return false;
+    }
+    return true;
+  }, [location.pathname]);
+
   return (
-    <div style={{height:"max-content"}}>
-       <Navbar />
-       <div  className='container'  >
-         {
-          children
-         }
-       </div>
-    </div>
-  )
-}
+    <div style={{ height: "max-content" }}>
+      <Navbar />
+      <div className="container">
+        {children}
 
-export default MainLayout
+        {path && <Footer /> }
+      </div>
+    </div>
+  );
+};
+
+export default MainLayout;

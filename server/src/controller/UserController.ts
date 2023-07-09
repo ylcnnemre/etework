@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { registerValidator } from "../Validators/RegisterValidator";
 import { LoginValidator } from "../Validators/LoginValidator";
 import { ValidationError } from "joi";
-import { UserModel } from "../Entities/UserSchema";
+import jwt from "jsonwebtoken";
 
 class UserController {
   userService: UserService;
@@ -39,6 +39,7 @@ class UserController {
     const { error, value } = LoginValidator.validate(req.body);
     if (error) {
       let result = this.errorFormat(error);
+      console.log("error =>", result);
       return res.status(400).send(result);
     }
     try {
@@ -48,11 +49,30 @@ class UserController {
 
       res.send(data);
     } catch (err) {
-
       res.status(401).json({
-         success : false,
-         msg : err.message
-      })
+        success: false,
+        msg: err.message,
+      });
+    }
+  }
+
+  async validateToken(req: Request, res: Response) {
+    try {
+      const { authorization } = req.headers;
+      console.log("hea ==>", req.headers);
+      const token = authorization.split(" ")[1];
+
+      const decotedToken = jwt.verify(token, process.env.Secret_key);
+
+      return res.json({
+        success: true,
+        value: decotedToken,
+      });
+    } catch (err) {
+      return res.json({
+        success: false,
+        value: err.message,
+      });
     }
   }
 }
