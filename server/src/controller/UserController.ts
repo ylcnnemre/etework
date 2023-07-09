@@ -39,7 +39,6 @@ class UserController {
     const { error, value } = LoginValidator.validate(req.body);
     if (error) {
       let result = this.errorFormat(error);
-      console.log("error =>", result);
       return res.status(400).send(result);
     }
     try {
@@ -59,7 +58,6 @@ class UserController {
   async validateToken(req: Request, res: Response) {
     try {
       const { authorization } = req.headers;
-      console.log("hea ==>", req.headers);
       const token = authorization.split(" ")[1];
 
       const decotedToken = jwt.verify(token, process.env.Secret_key);

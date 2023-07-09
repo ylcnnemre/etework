@@ -18,8 +18,6 @@ export class CompanyService {
   }
 
   async updateCompanyService(id: string, item: Partial<companyClassModel>) {
-    console.log("item ==>", item);
-    console.log("id ==>",id)
     let result = await companyModel.findByIdAndUpdate(
       id,
       {

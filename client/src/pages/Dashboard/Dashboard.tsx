@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { increment } from "../../redux/reducers/TestSlice";
 import { IDataTypes } from "../../redux/Store";
 import { httpClient } from "../../api/HttpClien";
-import { login } from "../../redux/reducers/AuthSlice";
+import { login, logout } from "../../redux/reducers/AuthSlice";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const [dashboardData, setDashboardData] = useState<{
@@ -37,13 +37,12 @@ const Dashboard = () => {
         headers: { Authorization: `bearer ${localStorage.getItem("token")} ` },
       })
       .then((val) => {
-        console.log("vall ==>", val);
         setDashboardData({
           ...val.data.value,
         });
       })
       .catch((err) => {
-        console.log("errr ==>", err);
+        console.log("err ==>",err)
       });
   }, []);
 

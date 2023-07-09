@@ -1,47 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, Navigate } from "react-router-dom";
-import Login from "../pages/Login/Login";
+import jwtDecode from "jwt-decode";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IDataTypes } from "../redux/Store";
 import { login, logout } from "../redux/reducers/AuthSlice";
-import { httpClient } from "../api/HttpClien";
-const ProtectedRoutes = () => {
-  const token = localStorage.getItem("token")
-  const dispatch= useDispatch()
-  if(token)
-  {
-    dispatch(login())
+import { IDataTypes } from "../redux/Store";
+import { Navigate, Outlet } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+
+export const ProtectedRoutes = () => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const jwtToken = localStorage.getItem("token");
+    if (jwtToken) {
+      const decodedToken: any = jwtDecode(jwtToken);
+
+      if (decodedToken.exp < Math.floor(Date.now() / 1000)) {
+        dispatch(logout());
+        setLoading(false);
+      } else {
+        dispatch(login());
+        setLoading(false);
+      }
+    } else {
+      dispatch(logout());
+      setLoading(false);
+    }
+  }, [dispatch]);
+
+  const { auth } = useSelector((item: IDataTypes) => item);
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+  if (loading) {
+    return (
+      <div style={{display:"flex",justifyContent:"center"}} >
+        <Spin indicator={antIcon} />;
+      </div>
+    );
   }
 
-
-  return  token ? <Outlet /> : <Navigate to={"/login"} />
-};
-
-export default ProtectedRoutes;
-
-const useTokenValidation = () => {
-  const [isValid, setIsValid] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const validateToken = async () => {
-    try {
-      const response = await httpClient.get("/user/validate");
-      console.log("respone =>", response);
-      if (response.data.success) {
-        setIsValid(true);
-        setIsLoading(false);
-      } else {
-        setIsValid(false);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      setError(error);
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    validateToken();
-  }, [isValid]);
-
-  return { isValid, isLoading, error };
+  return auth ? <Outlet /> : <Navigate to={"/login"} />;
 };

@@ -212,12 +212,7 @@ const CompanyPage = () => {
     }));
   };
 
-  useEffect(() => {
-    console.log("editing ==>", editingRow);
-  }, [editingRow]);
-
   const handleSave = async (record: Company) => {
-    console.log("recordd ==>", record);
     if (record.newCompany) {
       const { _id, newCompany, ...rest } = editedData;
 
@@ -225,7 +220,6 @@ const CompanyPage = () => {
         const response = await httpClient.post("/company/save", {
           ...rest,
         });
-        console.log("response ==>", response);
         if (response.data.success) {
           toast.success("the addition process was successfull ", {
             autoClose: 2000,
@@ -274,7 +268,6 @@ const CompanyPage = () => {
             return item;
           });
 
-          console.log("resultt123213 ==<", result);
 
           setDataSource(result);
 

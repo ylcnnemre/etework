@@ -70,7 +70,6 @@ const ProductsPage = () => {
   useEffect(() => {
     httpClient.get("/product/getall",{headers:{"Authorization":`bearer ${localStorage.getItem("token")}`}}).then((val) => {
       const { success, value } = val.data;
-      console.log("vall ==>", val);
       setDataSource(value);
       setTempData(value);
     });
@@ -247,14 +246,12 @@ const ProductsPage = () => {
   );
 
   const handleEdit = (record: Product) => {
-    console.log("rec ==>", dataSource);
     if (dataSource[0]?.newProduct) {
       const result = dataSource.slice(1, dataSource.length);
       setDataSource(result);
       setEditingRow(record._id);
       setEditedData(record);
     } else {
-      console.log("record ==>", record);
       setEditingRow(record._id);
       setEditedData(record);
     }
@@ -283,7 +280,6 @@ const ProductsPage = () => {
     if (record.newProduct) {
       const { _id, newProduct, ...rest } = editedData;
       try {
-        console.log("edited ==>", editedData);
         const response = await httpClient.post("/product/create", {
           ...rest,
           company: rest.company._id,
@@ -318,7 +314,6 @@ const ProductsPage = () => {
     } else {
       try {
         const { newProduct, ...rest } = editedData;
-        console.log("rest t))< ", rest);
         const response = await httpClient.post("/product/update", {
           ...rest,
           company: rest.company._id,
@@ -414,9 +409,7 @@ const ProductsPage = () => {
       control: false,
       id: null,
     });
-    console.log("deletemodal 0=>", deleteModal);
     const response = await httpClient.delete(`/product/${deleteModal.id}`);
-    console.log("response =>", response);
     if (response.data.success) {
       const result = dataSource.filter((item) => item._id !== deleteModal.id);
       setDataSource(result);
@@ -490,7 +483,6 @@ const ProductsPage = () => {
           open={companyData.control}
           footer={null}
           onCancel={() => {
-            console.log("çalıştıııı");
             setCompanyData({ control: false, value: [] });
           }}
         >

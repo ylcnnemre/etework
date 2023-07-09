@@ -18,7 +18,7 @@ const Navbar = () => {
 
       {auth ? (
         <div className="navbarLinkWrapper">
-          <Link className="navbarLink" to={"/dashboard"}>
+          <Link className="navbarLink" to={"/"}>
             HomePage
           </Link>
           <Link className="navbarLink" to={"/companies"}>

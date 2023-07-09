@@ -29,7 +29,6 @@ export class ProductController {
     try {
       const { company, ...rest } = req.body;
       const { error, value } = productSaveValidator.validate(req.body);
-      console.log("req body ==>", req.body);
       if (error) {
         return res.status(400).json({
           success: false,
@@ -58,7 +57,6 @@ export class ProductController {
   async getAllProduct(req: Request, res: Response) {
     try {
       let data = await this.productService.getAllProductService();
-      console.log("dataa ==>= ",data)
       res.status(200).send({
         success: true,
         value: data,

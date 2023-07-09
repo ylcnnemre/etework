@@ -18,8 +18,8 @@ const Login = () => {
       });
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
-
-        navigate("/dashboard");
+        dispatch(login())
+        navigate("/");
       }
     } catch (err) {
       console.log("err =>", err);
@@ -31,7 +31,7 @@ const Login = () => {
 
       if(token)
       {
-        navigate("/dashboard")
+        navigate("/")
       }
 
   },[])

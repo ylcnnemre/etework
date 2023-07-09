@@ -22,13 +22,12 @@ export class ProductService {
   }
 
   async updateProductService(id: string, item: Partial<ProductClassModel>) {
-    console.log("item ==>", item);
     let result = await productModel.findByIdAndUpdate(
       id,
       {
         $set: {
           category: item.category,
-          company: item.company._id,
+          company: item.company,
           quantity: item.quantity,
           unit: item.unit,
           productName: item.productName,

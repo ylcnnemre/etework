@@ -53,7 +53,6 @@ export class CompanyController {
 
   async updateCompany(req: Request, res: Response) {
     try {
-      console.log("update body ==>",req.body)
       const { _id, ...rest } = req.body;
       const { error, value } = companySaveValidate.validate(rest);
       if (error) {

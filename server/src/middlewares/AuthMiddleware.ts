@@ -8,11 +8,8 @@ export const authMiddleware = (
 ) => {
   try {
     const { authorization } = req.headers;
-    console.log("hea ==>",req.headers)
     const token = authorization.split(" ")[1];
-
     const decotedToken = jwt.verify(token, process.env.Secret_key);
-
 
     next()
 
